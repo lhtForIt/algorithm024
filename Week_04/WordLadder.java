@@ -66,253 +66,126 @@ class Solution {
          * 这个题其实和基因那道题很类似，区别就是数据规模大了很多，
          * 因此单纯用DFS直接遍历会超时
          *
+         * dfs思路是找到所有可能，然后比较其中最小的，
+         * 当时数据规模很大的时候，且递归树分支极不平衡的情况下，
+         * 遍历所有可能是十分耗时的操作，
+         * 极端例子：一个二叉树，左子树10000个节点，右子树3个节点，当找最小子树节点时，
+         * dfs，会遍历完两个子树才能得到结果，而bfs只要到第三层就能知道结果，效率差别巨大。
          */
 //        Set<String> visited = new HashSet<>();
 //        dfs(0, beginWord, endWord, wordList,visited);
 //
 //        return minLength == Integer.MAX_VALUE ? 0 : minLength;
 
-
         /**
-         * bfs+Set记录
+         * 单向BFS，
          */
-
+//        Set<String> wordSet = new HashSet<>(wordList);
 //        if (!wordList.contains(endWord)) {
 //            return 0;
 //        }
-//
-//        Set<String> visited = new HashSet<>();
 //        Deque<String> queue = new LinkedList<>();
+////        Set<String> visitedSet = new HashSet<>();
 //        queue.offer(beginWord);
-//        visited.add(beginWord);
-//        int level = 0;
-//
+////        visitedSet.add(beginWord);
+//        int len = 1;
 //        while (!queue.isEmpty()) {
-//
 //            int size = queue.size();
-//            level++;
 //            for (int i = 0; i < size; i++) {
-//                String curr = queue.poll();
-//                for (String str : wordList) {
-//                    if (visited.contains(str)) {
-//                        continue;
-//                    }
-//
-//                    if (!canConvert(curr, str)) {
-//                        continue;
-//                    }
-//
-//                    if (str.equals(endWord)) {
-//                        return level + 1;
-//                    }
-//
-//                    visited.add(str);
-//                    queue.offer(str);
-//
-//                }
-//
-//            }
-//
-//
-//        }
-//
-//
-//        return 0;
-
-        /**
-         * bfs+数组记录
-         */
-
-//        if (!wordList.contains(endWord)) {
-//            return 0;
-//        }
-//
-//        boolean[] visited = new boolean[wordList.size()];
-//        Deque<String> queue = new LinkedList<>();
-//        int index = wordList.indexOf(beginWord);
-//        if (index != -1) {
-//            visited[index] = true;
-//        }
-//        queue.offer(beginWord);
-//        int level = 0;
-//
-//        while (!queue.isEmpty()) {
-//
-//            int size = queue.size();
-//            level++;
-//            for (int i = 0; i < size; i++) {
-//                String curr = queue.poll();
-//                for (int j = 0; j < wordList.size(); j++) {
-//                    String str = wordList.get(j);
-//                    if (visited[j]) {
-//                        continue;
-//                    }
-//
-//                    if (!canConvert(curr, str)) {
-//                        continue;
-//                    }
-//
-//                    if (str.equals(endWord)) {
-//                        return level + 1;
-//                    }
-//
-//                    visited[j]=true;
-//                    queue.offer(str);
-//
-//                }
-//
-//            }
-//
-//
-//        }
-//
-//
-//        return 0;
-
-        /**
-         * 双向BFS
-         */
-
-//        int end = wordList.indexOf(endWord);
-//        if (end == -1) {
-//            return 0;
-//        }
-//
-//        wordList.add(beginWord);
-//        int start = wordList.size() - 1;
-//        Deque<Integer> queue1 = new LinkedList<>();
-//        Deque<Integer> queue2 = new LinkedList<>();
-//        Set<Integer> visited1 = new HashSet<>();
-//        Set<Integer> visited2 = new HashSet<>();
-//        queue1.offer(start);
-//        queue2.offer(end);
-//        visited1.add(start);
-//        visited2.add(end);
-//        int count = 0;
-//
-//        while (!queue2.isEmpty() && !queue1.isEmpty()) {
-//            count++;
-//            //从节点小的一端遍历，当queue1节点多与queue2交换
-//            if (queue1.size() > queue2.size()) {
-//                Deque<Integer> temp = queue1;
-//                queue1 = queue2;
-//                queue2 = temp;
-//                Set<Integer> t = visited1;
-//                visited1 = visited2;
-//                visited2 = t;
-//            }
-//
-//            int size = queue1.size();
-//            while (size-- > 0) {
-//                String s = wordList.get(queue1.poll());
-//                for (int i = 0; i < wordList.size(); i++) {
-//                    if (visited1.contains(i)) {
-//                        continue;
-//                    }
-//                    if (!canConvert(s, wordList.get(i))) {
-//                        continue;
-//                    }
-//                    if (visited2.contains(i)) {
-//                        return count + 1;
-//                    }
-//                    visited1.add(i);
-//                    queue1.offer(i);
-//                }
-//            }
-//
-//        }
-//        return 0;
-
-        /**
-         * 双向BFS+单词转换优化
-         */
-
-//        int end = wordList.indexOf(endWord);
-//        if (end == -1) {
-//            return 0;
-//        }
-//
-//        wordList.add(beginWord);
-//        Deque<String> queue1 = new LinkedList<>();
-//        Deque<String> queue2 = new LinkedList<>();
-//        Set<String> visited1 = new HashSet<>();
-//        Set<String> visited2 = new HashSet<>();
-//        queue1.offer(beginWord);
-//        queue2.offer(endWord);
-//        visited1.add(beginWord);
-//        visited2.add(endWord);
-//
-//        Set<String> allWordSet = new HashSet<>(wordList);
-//
-//        int count = 0;
-//
-//        while (!queue2.isEmpty() && !queue1.isEmpty()) {
-//            count++;
-//            //从节点小的一端遍历，当queue1节点多与queue2交换
-//            if (queue1.size() > queue2.size()) {
-//                Deque<String> temp = queue1;
-//                queue1 = queue2;
-//                queue2 = temp;
-//                Set<String> t = visited1;
-//                visited1 = visited2;
-//                visited2 = t;
-//            }
-//
-//            int size = queue1.size();
-//            while (size-- > 0) {
-//                String s = queue1.poll();
-//                char[] chars = s.toCharArray();
-//                //这儿不在和wordlist比，而是替换字符然后查看wordlist是否包含，不需要遍历整个字符串
-//                for (int i = 0; i < s.length(); i++) {
-//
-//                    char old = chars[i];
-//
-//                    for (char c = 'a'; c <= 'z'; c++) {
-//                        chars[i] = c;
-//                        String str = new String(chars);
-//                        // 已经访问过了，跳过
-//                        if (visited1.contains(str)) {
+//                String str = queue.poll();
+//                char[] chs = str.toCharArray();
+//                for (int k = 0; k < chs.length; k++) {
+//                    char old = chs[k];
+//                    for (char j = 'a'; j <= 'z'; j++) {
+//                        if (j == chs[k]) {
 //                            continue;
 //                        }
-//                        // 两端遍历相遇，结束遍历，返回 count
-//                        if (visited2.contains(str)) {
-//                            return count + 1;
+//                        chs[k] = j;
+//                        String target = new String(chs);
+//                        if (target.equals(endWord)) {
+//                            return len + 1;
 //                        }
-//
-//                        // 如果单词在列表中存在，将其添加到队列，并标记为已访问
-//                        if (allWordSet.contains(str)) {
-//                            queue1.offer(str);
-//                            visited1.add(str);
+//                        //参考全球站高赞法三解法
+////                        if (!visitedSet.contains(target) && wordSet.contains(target)) {
+//                        if (wordSet.contains(target)) {
+//                            wordSet.remove(target);
+//                            queue.offer(target);
+////                            visitedSet.add(target);
 //                        }
 //                    }
-//
-//                    chars[i] = old;
-//
+//                    chs[k] = old;
 //                }
 //            }
-//
+//            len++;
 //        }
 //        return 0;
 
+
+        /**
+         * 双端BFS
+         * 为了寻求更快的速度，用Set代替了queue
+         * 这里可以直接用wordSet保存访问记录，减少一个visitedSet变量，且wordSet会变小
+         */
+        Set<String> wordSet = new HashSet<>(wordList);
+        if (beginWord.length()!=endWord.length()||!wordList.contains(endWord)) return 0;
+        Set<String> beginSet = new HashSet<>();
+        Set<String> endSet = new HashSet<>();
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+        int len = 1;
+        //这里endSet不可能为空的，一开始endSet size为1，后面只有beginSet.size()>endSet才会交换，所以endSet一定是>=1的
+        while (!beginSet.isEmpty()) {
+            if (beginSet.size() > endSet.size()) {
+                Set<String> set = beginSet;
+                beginSet = endSet;
+                endSet = set;
+            }
+            //这个set替换代替了queue.poll()的过程
+            Set<String> temp = new HashSet<>();
+            for (String word : beginSet) {
+                char[] chs = word.toCharArray();
+                for (int i = 0; i < chs.length; i++) {
+                    char old = chs[i];
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        if (chs[i] == c) continue;
+                        chs[i] = c;
+                        String target = new String(chs);
+                        //两端都有这个元素即返回
+                        if (endSet.contains(target)) return len + 1;
+                        if (wordSet.contains(target)) {
+                            wordSet.remove(target);
+                            temp.add(target);
+                        }
+                    }
+                    chs[i]=old;
+                }
+            }
+            beginSet = temp;
+            len++;
+        }
+        return 0;
 
         /**
          * 全球站高赞双向BFS
          * 看着和一般的BFS不一样，没有用queue
+         *
+         * 纠正个误区，bfs不一定要用queue
+         *
          */
 
 //        if (!wordList.contains(endWord)) {
 //            return 0;
 //        }
-//
 //        Set<String> wordSet = new HashSet<>(wordList);
 //        Set<String> beginSet = new HashSet<>();
 //        Set<String> endSet = new HashSet<>();
 //        int len = 1;
 //        HashSet<String> visited = new HashSet<>();
-//
 //        beginSet.add(beginWord);
 //        endSet.add(endWord);
-//
+//        wordList.remove(beginWord);
+//        wordList.remove(endWord);
+//        //endSet一直不为空？
 //        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
 //            //始终让beginSet最小
 //            if (beginSet.size() > endSet.size()) {
@@ -320,20 +193,21 @@ class Solution {
 //                beginSet = endSet;
 //                endSet = set;
 //            }
-//
 //            Set<String> temp = new HashSet<>();
-//
 //            for (String word : beginSet) {
 //                char[] chs = word.toCharArray();
 //                for (int i = 0; i < chs.length; i++) {
 //                    for (char c = 'a'; c <= 'z'; c++) {
+//                        //当前字符相等就没必要转换了
+//                        if (c == chs[i]) {
+//                            continue;
+//                        }
 //                        char old = chs[i];
 //                        chs[i] = c;
 //                        String target = new String(chs);
 //                        if (endSet.contains(target)) {
 //                            return len + 1;
 //                        }
-//
 //                        if (!visited.contains(target) && wordSet.contains(target)) {
 //                            temp.add(target);
 //                            visited.add(target);
@@ -342,14 +216,10 @@ class Solution {
 //                    }
 //                }
 //            }
-//
 //            beginSet = temp;
 //            len++;
-//
 //        }
-//
 //        return 0;
-
 
         /**
          * 全球站法二
@@ -384,24 +254,30 @@ class Solution {
 
         /**
          * 全球站法三 2,3都是BFS
+         *
+         * 这个虽然是BFS，但是思路和奇妙，常规都是用一个set记录访问，然后用
+         * !visited.contains(target) && wordSet.contains(target)这个去判断，
+         * 但是这个思路是每次碰到包含的元素直接移出wordSet，这样wordSet变小，
+         * 且少访问一个visitedSet，因为java的set.contain()是近似O(1)，如果有hash冲突
+         * 其实还是有消耗的
+         *
+         *
          */
-        if (!wordList.contains(endWord)) return 0;
-        HashSet<String> set = new HashSet<>(wordList);
-        Queue<String> q = new LinkedList<>();
-        int length = 0;
-        set.add(endWord);
-        q.add(beginWord);
-
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                String w = q.poll();
-                if (w.equals(endWord)) return length + 1;
-                wordMatch(w, set, q);
-            }
-            length++;
-        }
-        return 0;
+//        if (!wordList.contains(endWord)) return 0;
+//        HashSet<String> set = new HashSet<>(wordList);
+//        Queue<String> q = new LinkedList<>();
+//        int length = 0;
+//        q.add(beginWord);
+//        while (!q.isEmpty()) {
+//            int size = q.size();
+//            for (int i = 0; i < size; i++) {
+//                String w = q.poll();
+//                if (w.equals(endWord)) return length + 1;
+//                wordMatch(w, set, q);
+//            }
+//            length++;
+//        }
+//        return 0;
 
 
 
@@ -421,22 +297,6 @@ class Solution {
                       }
                   }
               }
-          }
-
-          private boolean canConvert(String curr, String str) {
-
-              if (curr.length() != str.length()) {
-                  return false;
-              }
-
-              int diff = 0;
-              for (int i = 0; i < curr.length(); i++) {
-                  if (curr.charAt(i) != str.charAt(i)) {
-                      if(++diff>1) return false;
-                  }
-              }
-
-              return diff == 1;
           }
 
           private void dfs(int level, String beginWord, String endWord, List<String> wordList, Set<String> visited) {
